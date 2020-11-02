@@ -9,7 +9,7 @@ export default {
         ClusterTable
     },
     data: () => ({
-        parentOrigin: process.env.VUE_MAINSCREEN_ORIGIN
+        parentOrigin: process.env.VUE_APP_MAINSCREEN_ORIGIN
     }),
     computed: {
         isClustered () {
@@ -27,12 +27,10 @@ export default {
             this.postMessage("selectedParcels", curr.map(f => f.flurst_hh), "map-sync");
         },
         selectedClusters (curr) {
-            console.log(curr);
             this.postMessage("selectedClusters", curr, "map-sync");
         }
     },
     created () {
-        console.log(this.parentOrigin);
         window.addEventListener("message", this.onMessage);
         window.store = this.$store;
     },
