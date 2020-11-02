@@ -1,5 +1,7 @@
 # lig-infoscreen
 
+Communication between mainscreen and infoscreen via window.postMessage. Pass origin as string to environment variables.
+
 ## Project setup
 ```
 npm install
