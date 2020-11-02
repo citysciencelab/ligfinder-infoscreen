@@ -16,7 +16,7 @@ export default {
 
 <template>
     <v-app>
-        <h1>Bonjour</h1>
+        <h1>LigFinder Infoscreen</h1>
         <Infoscreen />
     </v-app>
 </template>

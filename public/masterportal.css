@@ -1,0 +1,93 @@
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+#cursorGlyph {
+    position: absolute;
+    z-index: 1000;
+    cursor: none;
+}
+
+.font-bold {
+    font-family: 'MasterPortalFont Bold','Arial Narrow',Arial,sans-serif;
+}
+
+label {
+    font-weight: normal;
+}
+
+#map {
+    position: relative;
+}
+
+.glyphicon-check, .glyphicon-unchecked, .glyphicon-download, .glyphicon-upload, .glyphicon-chevron-down, .glyphicon-plus-sign, .glyphicon-minus-sign, .glyphicon-refresh, .glyphicon-folder-close, .glyphicon-folder-open, .glyphicon-question-sign {
+    cursor: pointer;
+}
+
+@media (max-width: 767px) {
+    .btn-glyphicon, .glyphicon-plus-sign, .glyphicon-minus-sign, .glyphicon-info-sign, .glyphicon-check, .glyphicon-unchecked, .glyphicon-envelope, .glyphicon-book {
+        font-size: 18px !important;
+    }
+    html, body {
+        font-size: 16px;
+    }
+    #portalTitle {
+        display:none;
+    }
+}
+
+@media (min-height:200px) {
+    #poibody {
+        max-height:120px;
+    }
+}
+
+@media (min-height:250px) {
+    #poibody {
+        max-height:200px;
+    }
+}
+
+@media (min-height:300px) {
+    #poibody {
+        max-height:220px;
+    }
+}
+
+@media (min-height:480px) {
+    #poibody {
+        max-height:400px;
+    }
+}
+
+@media (min-height: 768px) {
+    #poibody {
+        max-height:700px;
+    }
+}
+
+#poibody {
+    overflow:auto;
+}
+
+/*bootstrap überschreiben*/
+.list-group {
+    margin-bottom: 0px !important;
+}
+
+.form-group:last-child {
+    margin-bottom: 0px;
+}
+
+.cluster {
+    font-size:25px;
+    border-radius:30px!important;
+    float:left;
+    margin:10px;
+}
+
+.btn-lgv-grey {
+    background-color:#E3E3E3;
+    color: #000000;
+}
