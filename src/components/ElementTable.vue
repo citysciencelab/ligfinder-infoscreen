@@ -54,7 +54,8 @@ export default {
             state: false
         },
         spiders: [],
-        score: undefined,
+        score: 0,
+        scores: [],
         infrastructureInfo: {
             state: false,
             data: {}
@@ -68,8 +69,8 @@ export default {
             "meters": "m",
             "minutes": "min"
         },
-        series: undefined,
-        spiderSeries: undefined,
+        series: [],
+        spiderSeries: [],
         chartOptions: {
             markers: {
                 size: [5],
@@ -133,7 +134,7 @@ export default {
                 },
             },
             xaxis: {
-                categories: ["SUPERMARKT", "AUTOBAHN", "APOTHEKE", "SCHULE", "HALTESTELLE"]
+                categories: ["SUPERMARKT", "AUTOBAHN", "APOTHEKE", "SCHULE", "BAHNHOF", "HALTESTELLE"]
             }
         }
     }),
@@ -198,52 +199,30 @@ export default {
                 this.sortBy = "checkbox";
             }
         },
-        infrastructureData() {
-            console.log("infrastructureData changed", this.$store.state.infrastructureData);
-            // if (Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range)).find(x => x ==="undefined"))
-            // {
-            //     console.log("not found")
-            //     this.series = [[{
-            //     name: 'Distanz',
-            //     data: []
-            //     }]];
-            // }
-            // else {
-            //     console.log("found")
-            //     this.series = [[{
-            //     name: 'Distanz',
-            //     data: []
-            //     },
-            //     {
-            //     name: "Reference",
-            //     data: [Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range))]
-            //     }]];
-            // }
-        },
         mapSync (v) {
             console.log(v);
         }
     },
-    mounted () {
-        if (Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range)).find(x => x === "undefined")) {
-            console.log("not found");
-            this.series = [[{
-                name: "Distanz",
-                data: []
-            }]];
-        }
-        else {
-            console.log("found");
-            this.series = [[{
-                name: "Distanz",
-                data: []
-            },
-            {
-                name: "Reference value",
-                data: [Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range))]
-            }]];
-        }
-    },
+    // mounted () {
+    //     if (Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range)).find(x => x === "undefined")) {
+    //         console.log("not found");
+    //         this.series = [[{
+    //             name: "Distanz",
+    //             data: []
+    //         }]];
+    //     }
+    //     else {
+    //         console.log("found");
+    //         this.series = [[{
+    //             name: "Distanz",
+    //             data: []
+    //         },
+    //         {
+    //             name: "Reference value",
+    //             data: [Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range))]
+    //         }]];
+    //     }
+    // },
     methods: {
         ...mapActions("Tools/LigFinder", [
             "downloadCSV",
@@ -276,7 +255,7 @@ export default {
             const referenceValue = Object.values(this.infrastructureData).map(x => parseFloat(x.range));
 
             this.series = [];
-            this.score = [];
+            this.scores = [];
             // this.spiderChartInfo = [{
             //     data: {},
             //     id: null
@@ -302,7 +281,7 @@ export default {
                     name: "Reference value",
                     data: Object.values(this.infrastructureData).map(x => parseFloat(x.range))
                 }]);
-                this.score.push(singleScore);
+                this.scores.push(singleScore);
 
                 const data = {};
 
@@ -316,7 +295,7 @@ export default {
                 this.spiderChartInfo.push({"data": data});
             });
             console.log("spiders series", this.series);
-            console.log("this.score", this.score);
+            console.log("this.score", this.scores);
         },
 
         spider_export (elementID) {
@@ -434,9 +413,6 @@ export default {
                 name: "Reference value",
                 data: referenceValue
             }];
-
-            console.log("this.spiderSeries", this.spiderSeries);
-            console.log("this.series.data", this.series[0][0].data);
             this.$refs.spider.updateSeries([series, {
                 name: "Reference value",
                 data: referenceValue
@@ -450,8 +426,7 @@ export default {
 
 
             this.infrastructureInfo.state = true;
-            console.log("item", item);
-            console.log("spider series", this.$refs.spider.series);
+
             this.infrastructureInfo.data = data;
             this.spiderChartInfo[0].data = {};
             this.spiderChartInfo[0].data.Flurstücksnummer = item.Flurst;
@@ -657,120 +632,65 @@ export default {
                     ref="spiderChartToExport"
                     class="spiders"
                 >
-                    <table>
-                        <tr>
-                            <td height="350px" />
-                            <td
-                                v-for="(row, index) in selected.slice(0,3)"
-                                id="spiders"
-                                :key="index"
-                                style="text-align:center;"
-                            >
-                                <p class="score">
-                                    TOTAL ABWEICHUNG: {{ Math.round(score[index]*100)/100 }}
-                                </p>
-                                <apexchart
-                                    type="radar"
-                                    width="400"
-                                    height="350"
-                                    data-labels-style-colors="#373d3f"
-                                    :options="chartOptions"
-                                    :series="series[index]"
-                                />
-                            </td>
-                        </tr>
-                        <tr
-                            v-for="(val, key) in spiderChartInfo[0].data"
+                     <table>
+                    <tr>
+                        <td height="350px">
+                        </td>
+                        <td v-for="(row, index) in selected.slice(0,3)" :key="index" id="spiders" style="text-align:center;">
+                             <h5 v-if="!Number.isNaN(scores[index])" class="score"> TOTAL ABWEICHUNG: {{ Math.round(scores[index]*100)/100 }}</h5>
+                            <apexchart ref="spiders" type="radar"  width="400" height="350" dataLabels.style.colors='#373d3f' :options="chartOptions" :series="series[index]"></apexchart> 
+                        </td>
+                    </tr>
+                    <tr v-for="(val, key) in spiderChartInfo[0].data"   
                             :key="key"
-                        >
-                            <td style="padding-right: 2cm; padding-bottom: 2mm; font-size: 14px;">
-                                {{ key }}
-                            </td>
-                            <td
-                                v-for="(row, index) in selected.slice(0,3)"
-                                :key="index"
-                                style="width: auto; padding-left:2cm; padding-bottom: 2mm;  font-size: 14px; text-align:center;"
-                            >
-                                {{ spiderChartInfo[index].data[key] }}
-                            </td>
-                        </tr>
-                        <tr v-if="selected.length > 3">
-                            <td height="350px" />
-                            <td
-                                v-for="(row, index2) in selected.slice(3,6)"
-                                id="spiders"
-                                :key="index2"
-                                style="text-align:center;"
-                            >
-                                <p class="score">
-                                    TOTAL ABWEICHUNG: {{ Math.round(score[index2]*100)/100 }}
-                                </p>
-                                <apexchart
-                                    type="radar"
-                                    width="400"
-                                    height="350"
-                                    data-labels-style-colors="#373d3f"
-                                    :options="chartOptions"
-                                    :series="series[index2+3]"
-                                />
-                            </td>
-                        </tr>
-                        <tr
-                            v-for="(val, key2) in spiderChartInfo[0].data"
-                            v-if="selected.length > 3"
+                    >
+                        <td style="padding-right: 2cm; padding-bottom: 2mm; font-size: 14px;">
+                            {{ key }}
+                        </td>
+                        <td  v-for="(row, index) in selected.slice(0,3)" :key="index" style="width: auto; padding-left:2cm; padding-bottom: 2mm;  font-size: 14px; text-align:center;">
+                            <p v-if="spiderChartInfo[index] !== undefined" class="ptext">{{ spiderChartInfo[index].data[key] }} </p>
+                        </td>
+                    </tr>
+                    <tr v-if="selected.length > 3">
+                        <td height="350px">
+                        </td>
+                        <td v-for="(row, index2) in selected.slice(3,6)" :key="index2" id="spiders" style="text-align:center;">
+                             <h5 v-if="!Number.isNaN(scores[index2+3])" class="score">TOTAL ABWEICHUNG:   {{ Math.round(scores[index2+3]*100)/100 }}</h5>
+                            <apexchart type="radar"  width="400" height="350" dataLabels.style.colors='#373d3f' :options="chartOptions" :series="series[index2+3]"></apexchart> 
+                        </td>
+                    </tr>
+                    <tr  v-if="selected.length > 3" v-for="(val, key2) in spiderChartInfo[0].data"   
                             :key="key2"
-                        >
-                            <td style="padding-right: 2cm; padding-bottom: 2mm; font-size: 14px;">
-                                {{ key2 }}
-                            </td>
-                            <td
-                                v-for="(row, index2) in selected.slice(3,6)"
-                                :key="index2"
-                                style="width: auto; padding-left:2cm; padding-bottom: 2mm;  font-size: 14px; text-align:center;"
-                            >
-                                {{ spiderChartInfo[index2+3].data[key2] }}
-                            </td>
-                        </tr>
+                    >
+                        <td style="padding-right: 2cm; padding-bottom: 2mm; font-size: 14px;">
+                            {{ key2 }}
+                        </td>
+                        <td  v-for="(row, index2) in selected.slice(3,6)" :key="index2" style="width: auto; padding-left:2cm; padding-bottom: 2mm;  font-size: 14px; text-align:center;">
+                            <p v-if="spiderChartInfo[index2+3] !== undefined" class="ptext"> {{ spiderChartInfo[index2+3].data[key2] }}</p>
+                        </td>
+                    </tr>
 
 
-                        <tr v-if="selected.length > 6">
-                            <td height="350px" />
-                            <td
-                                v-for="(row, index) in selected.slice(6,9)"
-                                id="spiders"
-                                :key="index"
-                                style="text-align:center;"
-                            >
-                                <p class="score">
-                                    TOTAL ABWEICHUNG: {{ Math.round(score[index]*100)/100 }}
-                                </p>
-                                <apexchart
-                                    type="radar"
-                                    width="400"
-                                    height="350"
-                                    data-labels-style-colors="#373d3f"
-                                    :options="chartOptions"
-                                    :series="series[index+6]"
-                                />
-                            </td>
-                        </tr>
-                        <tr
-                            v-for="(val, key) in spiderChartInfo[0].data"
-                            v-if="selected.length > 6"
+
+                    <tr v-if="selected.length > 6">
+                        <td height="350px">
+                        </td>
+                        <td v-for="(row, index) in selected.slice(6,9)" :key="index" id="spiders" style="text-align:center;">
+                             <h5 v-if="!Number.isNaN(scores[index+6])" class="score">TOTAL ABWEICHUNG:  {{ Math.round(scores[index+6]*100)/100 }}</h5>
+                            <apexchart type="radar"  width="400" height="350" dataLabels.style.colors='#373d3f' :options="chartOptions" :series="series[index+6]"></apexchart> 
+                        </td>
+                    </tr>
+                    <tr v-if="selected.length > 6" v-for="(val, key) in spiderChartInfo[0].data"   
                             :key="key"
-                        >
-                            <td style="padding-right: 2cm; padding-bottom: 2mm; font-size: 14px;">
-                                {{ key }}
-                            </td>
-                            <td
-                                v-for="(row, index) in selected.slice(6,9)"
-                                :key="index"
-                                style="width: auto; padding-left:2cm; padding-bottom: 2mm;  font-size: 14px; text-align:center;"
-                            >
-                                {{ spiderChartInfo[index+6].data[key] }}
-                            </td>
-                        </tr>
-                    </table>
+                    >
+                        <td style="padding-right: 2cm; padding-bottom: 2mm; font-size: 14px;">
+                            {{ key }}
+                        </td>
+                        <td  v-for="(row, index) in selected.slice(6,9)" :key="index" style="width: auto; padding-left:2cm; padding-bottom: 2mm;  font-size: 14px; text-align:center;">
+                             <p v-if="spiderChartInfo[index+6] !== undefined" class="ptext">{{ spiderChartInfo[index+6].data[key] }}</p>
+                        </td>
+                    </tr>
+              </table>
                     <v-btn
                         outlined
                         text
@@ -884,6 +804,10 @@ export default {
             float: none;
             padding: 10px;
             border-radius: 25px;
+        }
+         .ptext {
+            margin-bottom: 0px;
+            color: black;
         }
     }
 </style>
