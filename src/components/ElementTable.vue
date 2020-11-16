@@ -203,26 +203,6 @@ export default {
             console.log(v);
         }
     },
-    // mounted () {
-    //     if (Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range)).find(x => x === "undefined")) {
-    //         console.log("not found");
-    //         this.series = [[{
-    //             name: "Distanz",
-    //             data: []
-    //         }]];
-    //     }
-    //     else {
-    //         console.log("found");
-    //         this.series = [[{
-    //             name: "Distanz",
-    //             data: []
-    //         },
-    //         {
-    //             name: "Reference value",
-    //             data: [Object.values(this.$store.state.infrastructureData).map(x => parseFloat(x.range))]
-    //         }]];
-    //     }
-    // },
     methods: {
         ...mapActions("Tools/LigFinder", [
             "downloadCSV",
@@ -248,19 +228,13 @@ export default {
             window.open(BACKEND_URL + "shape?fsk=" + fsks, "_blank");
         },
         exportSpiderChart () {
-            console.log("selected", this.selected);
-            console.log("selected.slice(3,6)", this.selected.slice(3, 6));
             // show
             this.spider.state = true;
             const referenceValue = Object.values(this.infrastructureData).map(x => parseFloat(x.range));
-            
-            console.log("referenceValue", referenceValue)
+
             this.series = [];
             this.scores = [];
-            // this.spiderChartInfo = [{
-            //     data: {},
-            //     id: null
-            // }];
+
             this.spiderChartInfo = [];
 
 
@@ -295,8 +269,7 @@ export default {
                 data.Bruttogeschossflächenpotential = element.Bruttogeschossflächenpotential;
                 this.spiderChartInfo.push({"data": data});
             });
-            console.log("spiders series", this.series);
-            console.log("this.score", this.scores);
+
         },
 
         spider_export (elementID) {
@@ -369,17 +342,14 @@ export default {
             console.log(item);
         },
         openInfrastructureInfo (item) {
-            console.log("item", item);
             const data = item.distances;
 
             this.spiderChartInfo.data = [];
             const series = {};
 
             this.score = 0;
-            console.log("this.infrastructureData", this.infrastructureData);
             const referenceValue = Object.values(this.infrastructureData).map(x => parseFloat(x.range));
 
-            console.log("referenceValue", referenceValue);
 
 
             series["name"] = "Distanz";
@@ -387,15 +357,11 @@ export default {
             let i = 0;
 
             for (const [key, value] of Object.entries(item.distances)) {
-                console.log("key", key);
-                console.log("value", value);
                 if (key !== "unit") {
-                    console.log("key", key, "referenceValue", referenceValue[i], "i", i);
                     series["data"].push(value[1]);
                     this.score += value[1] - referenceValue[i++];
                 }
             }
-            console.log("score", this.score);
 
 
             for (const infrastructureType in this.infrastructureLayers) {
