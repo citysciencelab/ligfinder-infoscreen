@@ -253,7 +253,8 @@ export default {
             // show
             this.spider.state = true;
             const referenceValue = Object.values(this.infrastructureData).map(x => parseFloat(x.range));
-
+            
+            console.log("referenceValue", referenceValue)
             this.series = [];
             this.scores = [];
             // this.spiderChartInfo = [{

@@ -58,6 +58,13 @@ const initialState = {
             profile: "Gehen",
             intervals: 5
         },
+        stations: {
+            locations: [],
+            range_type: "Meter",
+            range: "undefined",
+            profile: "Gehen",
+            intervals: 5
+        },
         stops: {
             locations: [],
             range_type: "Meter",

@@ -16,6 +16,7 @@ export default {
             grocery: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.grocery, 3), isNaN, 0),
             pharmacy: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.pharmacy, 3), isNaN, 0),
             stops: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.stops, 3), isNaN, 0),
+            stations: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.stations, 3), isNaN, 0),
             school: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.school, 3), isNaN, 0),
             highway: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.highway,3), isNaN, 0),
             infoInfrastructure: {
@@ -231,6 +232,26 @@ export default {
                             label="Einheit"
                         />
                     </v-col>
+        </v-row>
+        <v-row align="center"
+      justify="start">
+            <v-col class="d-flex">
+              Bahnhöfe (S/U/R)
+            </v-col>
+            <v-col class="d-flex">
+                <v-text-field
+                    v-model="infrastructureData.stations.range"
+                    label="Distanz"
+                    :rules="rules.range"
+                />
+            </v-col>
+            <v-col class="d-flex">
+                <v-select
+                    v-model="infrastructureData.stations.range_type"
+                    :items="units"
+                    label="Einheit"
+                />
+            </v-col>
         </v-row>
         <v-row align="center"
       justify="start"> 
