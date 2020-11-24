@@ -184,21 +184,84 @@ export default {
         }
     },
     watch: {
-        selected (curr) {
-            if (curr.length > 0) {
+        // selected (curr) {
+        //     if (curr.length > 0) {
+        //         this.tableParcels.forEach(tableFeature => {
+        //             if (curr.includes(tableFeature)) {
+
+        //                 tableFeature.checkbox = 0;
+        //             }
+        //             else {
+        //                 tableFeature.checkbox = 1;
+        //             }
+
+        //         });
+        //         this.sortBy = "checkbox";
+        //     }
+        // },
+          selected (curr) {
+            if(curr.length>0){
                 this.tableParcels.forEach(tableFeature => {
-                    if (curr.includes(tableFeature)) {
+                        if (curr.includes(tableFeature)){
 
-                        tableFeature.checkbox = 0;
-                    }
-                    else {
-                        tableFeature.checkbox = 1;
-                    }
-
+                            tableFeature.checkbox = 0;
+                        }
+                        else {
+                            tableFeature.checkbox = 1;
+                        }
+                   
                 });
                 this.sortBy = "checkbox";
             }
-        },
+            else {
+                 this.tableParcels.forEach(tableFeature => {
+                        tableFeature.checkbox = 1;
+                });
+               this.sortBy = null;
+            }
+            
+            if (this.parcelsInCluster.length !== 0) {
+                this.parcelsInCluster.forEach(feature => {
+                    if (this.parcelStyle === "infrastructure") {
+                        feature.setStyle(Styles.byColor(feature.get("distanceScore")?.color));
+                    }
+                    else {
+                        feature.setStyle(Styles.default);
+                    // feature.setStyle(Styles.defaultColor(feature.getStyle()));
+                    }
+                    // feature.setStyle(Styles.defaultColor(feature.getStyle()));
+                });
+            }
+            else {
+                this.parcels.forEach(feature => {
+                    if (this.parcelStyle === "infrastructure") {
+                        feature.setStyle(Styles.byColor(feature.get("distanceScore")?.color));
+                    }
+                    else {
+                        feature.setStyle(Styles.default);
+                    // feature.setStyle(Styles.defaultColor(feature.getStyle()));
+                    }
+                });
+
+            }
+            curr.forEach(tableFeature => {
+                
+
+                if (tableFeature.feature) {
+                    Radio.trigger("Map", "zoomToExtent", tableFeature.feature.getGeometry());   
+                    tableFeature.feature.setStyle(Styles.highlight(tableFeature.feature.getStyle()));
+                }
+            });
+
+            // redraw all parcels according to selected style-tag
+            this.updateParcelStyles();
+
+            // Filter Infrastructure
+            // check if infrastructure has been set
+            if (this.parcels?.[0]?.get("distances")) {
+                this.filterInfrastructure();
+            }
+        },  
         mapSync (v) {
             console.log(v);
         }
