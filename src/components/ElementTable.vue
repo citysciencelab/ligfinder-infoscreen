@@ -8,7 +8,7 @@
     Interaction between the table and the map is enabled.
 */
 import {mapState, mapActions} from "vuex";
-import Styles from "../../olStyles";
+// import Styles from "../../olStyles";
 import VueApexCharts from "vue-apexcharts";
 // import pdf from 'vue-pdf'
 // import jsPDF from 'jspdf'
@@ -221,33 +221,32 @@ export default {
             }
 
             if (this.parcelsInCluster.length !== 0) {
-                this.parcelsInCluster.forEach(feature => {
-                    if (this.parcelStyle === "infrastructure") {
-                        feature.setStyle(Styles.byColor(feature.get("distanceScore")?.color));
-                    }
-                    else {
-                        feature.setStyle(Styles.default);
-                    // feature.setStyle(Styles.defaultColor(feature.getStyle()));
-                    }
-                    // feature.setStyle(Styles.defaultColor(feature.getStyle()));
-                });
+                // this.parcelsInCluster.forEach(feature => {
+                //     if (this.parcelStyle === "infrastructure") {
+                //         feature.setStyle(Styles.byColor(feature.get("distanceScore")?.color));
+                //     }
+                //     else {
+                //         feature.setStyle(Styles.default);
+                //     // feature.setStyle(Styles.defaultColor(feature.getStyle()));
+                //     }
+                //     // feature.setStyle(Styles.defaultColor(feature.getStyle()));
+                // });
             }
             else {
-                this.parcels.forEach(feature => {
-                    if (this.parcelStyle === "infrastructure") {
-                        feature.setStyle(Styles.byColor(feature.get("distanceScore")?.color));
-                    }
-                    else {
-                        feature.setStyle(Styles.default);
-                    // feature.setStyle(Styles.defaultColor(feature.getStyle()));
-                    }
-                });
-
+                // this.parcels.forEach(feature => {
+                //     if (this.parcelStyle === "infrastructure") {
+                //         feature.setStyle(Styles.byColor(feature.get("distanceScore")?.color));
+                //     }
+                //     else {
+                //         feature.setStyle(Styles.default);
+                //     // feature.setStyle(Styles.defaultColor(feature.getStyle()));
+                //     }
+                // });
             }
             curr.forEach(tableFeature => {
                 if (tableFeature.feature) {
                     Radio.trigger("Map", "zoomToExtent", tableFeature.feature.getGeometry());
-                    tableFeature.feature.setStyle(Styles.highlight(tableFeature.feature.getStyle()));
+                    // tableFeature.feature.setStyle(Styles.highlight(tableFeature.feature.getStyle()));
                 }
             });
 
@@ -298,7 +297,6 @@ export default {
 
             this.spiderChartInfo = [];
 
-
             this.selected.forEach(element => {
                 const tmp = {};
 
@@ -330,7 +328,6 @@ export default {
                 data.Bruttogeschossflächenpotential = element.Bruttogeschossflächenpotential;
                 this.spiderChartInfo.push({"data": data});
             });
-
         },
 
         spider_export (elementID) {
@@ -354,7 +351,6 @@ export default {
         },
 
         saveAs(uri, filename) {
-
             var link = document.createElement("a");
 
             if (typeof link.download === "string") {
@@ -370,12 +366,9 @@ export default {
 
                 // remove the link when done
                 document.body.removeChild(link);
-
             }
             else {
-
                 window.open(uri);
-
             }
         },
         showCaptureRef() {
@@ -409,7 +402,6 @@ export default {
             this.score = 0;
             const referenceValue = Object.values(this.infrastructureData).map(x => parseFloat(x.range));
 
-
             series["name"] = "Distanz";
             series["data"] = [];
             let i = 0;
@@ -420,7 +412,6 @@ export default {
                     this.score += value[1] - referenceValue[i++];
                 }
             }
-
 
             for (const infrastructureType in this.infrastructureLayers) {
                 const layerId = this.infrastructureLayers[infrastructureType],
@@ -450,7 +441,6 @@ export default {
             // data: [Object.values(this.infrastructureData).map(x => parseFloat(x.range))]
             // });
 
-
             this.infrastructureInfo.state = true;
 
             this.infrastructureInfo.data = data;
@@ -474,7 +464,6 @@ export default {
             //     this.parcelStyle = null;
             // }
         }
-
     }
 };
 </script>
