@@ -37,7 +37,7 @@ export default {
     methods: {
         onMessage (msg) {
             if (msg.data?.type === "store") {
-                console.log(msg.data.path, msg.data.payload);
+                // console.log(msg.data.path, msg.data.payload);
                 this.$store.commit(msg.data.path, msg.data.payload);
             }
         },

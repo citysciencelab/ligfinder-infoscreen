@@ -11,35 +11,34 @@ export default {
     name: "InfrastructureDistance",
     components: {PureSlider},
     data () {
-
         return {
             grocery: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.grocery, 3), isNaN, 0),
             pharmacy: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.pharmacy, 3), isNaN, 0),
             stops: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.stops, 3), isNaN, 0),
             stations: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.stations, 3), isNaN, 0),
             school: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.school, 3), isNaN, 0),
-            highway: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.highway,3), isNaN, 0),
+            highway: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.highway, 3), isNaN, 0),
             infoInfrastructure: {
                 state: false,
                 text: "Hier können Sie die Distanzen zu den Infrastrukturdaten verändern"
             },
             title: "Distanzen zu den Infrastrukturen",
             infrastructureStyle: false,
-        rules: {
-            range: [
-                v => Boolean(v) || "Wert erforderlich.",
-                v => !isNaN(parseFloat(v)) || "Distanz muss eine Zahl sein."
+            rules: {
+                range: [
+                    v => Boolean(v) || "Wert erforderlich.",
+                    v => !isNaN(parseFloat(v)) || "Distanz muss eine Zahl sein."
+                ]
+            },
+            units: [
+                "Meter"
+            ],
+            profiles: [
+                "Auto",
+                "Rad",
+                "Gehen",
+                "Rollstuhl"
             ]
-        },
-        units: [
-            "Meter"
-        ],
-        profiles: [
-            "Auto",
-            "Rad",
-            "Gehen",
-            "Rollstuhl"
-        ]
         };
     },
     computed: {
@@ -68,8 +67,8 @@ export default {
         },
         distances () {
             // eslint-disable-next-line no-unneeded-ternary
-            console.log("this.parcels",this.parcels)
-            return this.parcels[0].get("distances") ? true : false;
+            // console.log("this.parcels", this.parcels);
+            return Boolean(this.parcels[0].get("distances"));
         },
         parcelStyle: {
             get () {
@@ -80,7 +79,7 @@ export default {
                     this.$store.state.Tools.LigFinder?.parcelLayer.setZIndex(6000);
                     this.$store.state.Tools.LigFinder?.clusterLayer.setZIndex(-1);
                 }
-                else if (this.clusters.length > 0 && v === undefined){
+                else if (this.clusters.length > 0 && v === undefined) {
                     this.$store.state.Tools.LigFinder?.parcelLayer.setZIndex(-1);
                     this.$store.state.Tools.LigFinder?.clusterLayer.setZIndex(6000);
                 }
@@ -101,19 +100,20 @@ export default {
             "filterInfrastructure",
             "adjustDistanceWeighting"
         ]),
-        checkInfrastructurePreferences(){
-            console.log("this.infrastructureData", this.infrastructureData)
+        checkInfrastructurePreferences() {
+            // console.log("this.infrastructureData", this.infrastructureData);
             let allDefined = true;
-            for (const [key, value] of Object.entries(this.infrastructureData)) {
-                    if (this.infrastructureData[key].range === "undefined")
-                        {
-                            Radio.trigger("Alert", "alert", "Bitte alle Werte eintragen." );
-                            allDefined= false;
-                            break;
-                        }
-            }
-            if (allDefined) Radio.trigger("Alert", "alert", "Erfolgreich gespeichert." );
 
+            for (const key of Object.keys(this.infrastructureData)) {
+                if (this.infrastructureData[key].range === "undefined") {
+                    Radio.trigger("Alert", "alert", "Bitte alle Werte eintragen.");
+                    allDefined = false;
+                    break;
+                }
+            }
+            if (allDefined) {
+                Radio.trigger("Alert", "alert", "Erfolgreich gespeichert.");
+            }
         }
     }
 };
@@ -153,90 +153,100 @@ export default {
                 Schließen
             </v-btn>
         </v-snackbar>
-        <v-row  align="center"
-      justify="start">
-            <v-col  class="mb-6" >
-              Supermarkt
-                </v-col>
-               <v-col class="d-flex">
-                        <v-text-field
-                            v-model="infrastructureData.grocery.range"
-                            label="Distanz"
-                            :rules="rules.range"
-                        />
-                    </v-col>
-             <v-col class="d-flex">
-                        <v-select
-                            v-model="infrastructureData.grocery.range_type"
-                            :items="units"
-                            label="Einheit"
-                        />
-                    </v-col>
-        </v-row>
-        <v-row  align="center"
-      justify="start">
-            <v-col  class="mb-6" >
-              Apotheke
-                </v-col>
-               <v-col class="d-flex">
-                        <v-text-field
-                            v-model="infrastructureData.pharmacy.range"
-                            label="Distanz"
-                            :rules="rules.range"
-                        />
-                    </v-col>
-             <v-col class="d-flex">
-                        <v-select
-                            v-model="infrastructureData.pharmacy.range_type"
-                            :items="units"
-                            label="Einheit"
-                        />
-                    </v-col>
-        </v-row>
-                <v-row align="center"
-      justify="start">
+        <v-row
+            align="center"
+            justify="start"
+        >
+            <v-col class="mb-6">
+                Supermarkt
+            </v-col>
             <v-col class="d-flex">
-              Schulen
-                </v-col>
-               <v-col class="d-flex">
-                        <v-text-field
-                            v-model="infrastructureData.school.range"
-                            label="Distanz"
-                            :rules="rules.range"
-                        />
-                    </v-col>
-             <v-col class="d-flex">
-                        <v-select
-                            v-model="infrastructureData.school.range_type"
-                            :items="units"
-                            label="Einheit"
-                        />
-                    </v-col>
-        </v-row>
-        <v-row align="center"
-      justify="start">
+                <v-text-field
+                    v-model="infrastructureData.grocery.range"
+                    label="Distanz"
+                    :rules="rules.range"
+                />
+            </v-col>
             <v-col class="d-flex">
-              Haltestellen
-                </v-col>
-               <v-col class="d-flex">
-                        <v-text-field
-                            v-model="infrastructureData.stops.range"
-                            label="Distanz"
-                            :rules="rules.range"
-                        />
-                    </v-col>
-             <v-col class="d-flex">
-                        <v-select
-                            v-model="infrastructureData.stops.range_type"
-                            :items="units"
-                            label="Einheit"
-                        />
-                    </v-col>
+                <v-select
+                    v-model="infrastructureData.grocery.range_type"
+                    :items="units"
+                    label="Einheit"
+                />
+            </v-col>
         </v-row>
-        <v-row align="center"
-      justify="start">
+        <v-row
+            align="center"
+            justify="start"
+        >
+            <v-col class="mb-6">
+                Apotheke
+            </v-col>
             <v-col class="d-flex">
-              Bahnhöfe (S/U/R)
+                <v-text-field
+                    v-model="infrastructureData.pharmacy.range"
+                    label="Distanz"
+                    :rules="rules.range"
+                />
+            </v-col>
+            <v-col class="d-flex">
+                <v-select
+                    v-model="infrastructureData.pharmacy.range_type"
+                    :items="units"
+                    label="Einheit"
+                />
+            </v-col>
+        </v-row>
+        <v-row
+            align="center"
+            justify="start"
+        >
+            <v-col class="d-flex">
+                Schulen
+            </v-col>
+            <v-col class="d-flex">
+                <v-text-field
+                    v-model="infrastructureData.school.range"
+                    label="Distanz"
+                    :rules="rules.range"
+                />
+            </v-col>
+            <v-col class="d-flex">
+                <v-select
+                    v-model="infrastructureData.school.range_type"
+                    :items="units"
+                    label="Einheit"
+                />
+            </v-col>
+        </v-row>
+        <v-row
+            align="center"
+            justify="start"
+        >
+            <v-col class="d-flex">
+                Haltestellen
+            </v-col>
+            <v-col class="d-flex">
+                <v-text-field
+                    v-model="infrastructureData.stops.range"
+                    label="Distanz"
+                    :rules="rules.range"
+                />
+            </v-col>
+            <v-col class="d-flex">
+                <v-select
+                    v-model="infrastructureData.stops.range_type"
+                    :items="units"
+                    label="Einheit"
+                />
+            </v-col>
+        </v-row>
+        <v-row
+            align="center"
+            justify="start"
+        >
+            <v-col class="d-flex">
+                Bahnhöfe (S/U/R)
             </v-col>
             <v-col class="d-flex">
                 <v-text-field
@@ -253,25 +263,27 @@ export default {
                 />
             </v-col>
         </v-row>
-        <v-row align="center"
-      justify="start"> 
+        <v-row
+            align="center"
+            justify="start"
+        >
             <v-col class="d-flex">
-              Autobahnausfahrt
-                </v-col>
-               <v-col class="d-flex">
-                        <v-text-field
-                            v-model="infrastructureData.highway.range"
-                            label="Distanz"
-                            :rules="rules.range"
-                        />
-                    </v-col>
-             <v-col class="d-flex">
-                        <v-select
-                            v-model="infrastructureData.highway.range_type"
-                            :items="units"
-                            label="Einheit"
-                        />
-                    </v-col>
+                Autobahnausfahrt
+            </v-col>
+            <v-col class="d-flex">
+                <v-text-field
+                    v-model="infrastructureData.highway.range"
+                    label="Distanz"
+                    :rules="rules.range"
+                />
+            </v-col>
+            <v-col class="d-flex">
+                <v-select
+                    v-model="infrastructureData.highway.range_type"
+                    :items="units"
+                    label="Einheit"
+                />
+            </v-col>
         </v-row>
 
         <v-card-actions>
@@ -290,7 +302,6 @@ export default {
             >
                 Speichern
             </v-btn>
-
         </v-card-actions>
     </v-container>
 </template>

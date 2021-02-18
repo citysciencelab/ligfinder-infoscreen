@@ -2,11 +2,11 @@
 /* Component description:
     This component is enabling a table overview of the filtered parcels in a fuzzy search,
     meaning that given the desired area not only the individual parcels are considered, but
-    also the neighboring parcels, creating in that manner clusters of parcels. 
+    also the neighboring parcels, creating in that manner clusters of parcels.
     Indiividuale parcels of each cluster can also be shown in the table.
     Interaction between the table and the map is enabled.
 */
-import {mapState, mapActions, mapGetters} from "vuex";
+import {mapState, mapActions} from "vuex";
 import ElementTable from "./ElementTable.vue";
 // import Styles from "../../olStyles";
 
@@ -49,8 +49,6 @@ export default {
             "infrastructureLayers"
         ]),
         tableClusters () {
-            var count = 0;
-
             return this.clusters.map(properties => {
                 for (const key in properties) {
                     if (properties?.[key] !== null && properties?.[key] !== null && properties[key].color && properties[key].value) {
@@ -109,12 +107,13 @@ export default {
             });
         },
         exportSHP () {
-            if(this.selected.length === 0) {
-                return
+            if (this.selected.length === 0) {
+                return;
             }
-            const fsks = this.selected.map(c => c.flursts)
-            const query = fsks.map((c, idx) => c.map(f => f + "&cluster=" + idx).join("&fsk=")).join("&fsk=")
-            window.open(BACKEND_URL + "shape?fsk=" + query, '_blank')
+            const fsks = this.selected.map(c => c.flursts);
+            const query = fsks.map((c, idx) => c.map(f => f + "&cluster=" + idx).join("&fsk=")).join("&fsk=");
+
+            window.open(BACKEND_URL + "shape?fsk=" + query, "_blank");
         },
         save () {
             this.dialog.state = true;
@@ -176,13 +175,13 @@ export default {
                 :search="search"
                 @item-expanded="clicked"
             >
-                <template v-slot:expanded-item="{ headers, item }">
+                <template v-slot:expanded-item="{ headers }">
                     <td :colspan="headers.length">
                         <ElementTable />
                     </td>
                     <!-- <td :colspan="headers.length">More info about {{ item.id }}</td> -->
                 </template>
-                <template v-slot:item.comment="{ item }">
+                <template v-slot:[`item.comment`]="{ item }">
                     <v-edit-dialog
                         @save="save"
                         @cancel="cancel"
@@ -215,7 +214,7 @@ export default {
                                 </v-icon>
                             </v-btn>
                         </td>
-                        
+
                         <td class="table-footer">
                             <v-btn
                                 outlined

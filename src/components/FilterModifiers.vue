@@ -1,9 +1,9 @@
 <script>
 /* Component description:
     This component enables the user to set his/hers preferences regarding to the the
-    distance to the closest infrastructure amenities. The visualisation on the map can be 
-    turned on (click on the "Layer einschalten") and turned off (click on the "Layer 
-    ausschalten"). The greener the parcel, the smaller the weighted distance to the closest 
+    distance to the closest infrastructure amenities. The visualisation on the map can be
+    turned on (click on the "Layer einschalten") and turned off (click on the "Layer
+    ausschalten"). The greener the parcel, the smaller the weighted distance to the closest
     infrastructure amenities. Weighting is done using the weighted aggregation method. The higher the weight, the greater
     the importance of this particular amenity.
 */
@@ -17,7 +17,7 @@ export default {
             pharmacy: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.pharmacy, 3), isNaN, 0),
             stops: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.stops, 3), isNaN, 0),
             school: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.school, 3), isNaN, 0),
-            highway: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.highway,3), isNaN, 0),
+            highway: fallback(round(this.$store.state.Tools.LigFinder?.distanceWeighting?.highway, 3), isNaN, 0),
             infoInfrastructure: {
                 state: false,
                 text: "Hier können Sie die Gewichtung zu den Infrastrukturdaten verändern"
@@ -121,7 +121,7 @@ export default {
                     this.$store.state.Tools.LigFinder?.parcelLayer.setZIndex(6000);
                     this.$store.state.Tools.LigFinder?.clusterLayer.setZIndex(-1);
                 }
-                else if (this.clusters.length > 0 && v === undefined){
+                else if (this.clusters.length > 0 && v === undefined) {
                     this.$store.state.Tools.LigFinder?.parcelLayer.setZIndex(-1);
                     this.$store.state.Tools.LigFinder?.clusterLayer.setZIndex(6000);
                 }

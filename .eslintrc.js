@@ -9,6 +9,10 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 2020
     },
+    globals: {
+        "Radio": true,
+        "BACKEND_URL": true
+    },
     rules: {
     // Priority B: Strongly Recommended
         'vue/attribute-hyphenation': ['error', 'always'],
