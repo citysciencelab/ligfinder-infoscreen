@@ -24,3 +24,11 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Deployment
+
+Docker-Image für TEST/PROD bauen:
+
+```
+docker build -t citysciencelab/ligfinder-infoscreen .
+```
